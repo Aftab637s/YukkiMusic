@@ -1,10 +1,19 @@
-FROM python:3.10-buster
-RUN apt-get update -y && apt-get upgrade -y \
-    && apt-get install -y --no-install-recommends ffmpeg \
-    && apt-get clean \
+FROM python:3.10-slim-buster
+
+WORKDIR /app
+
+# System dependencies install karna (FFmpeg zaroori hai music ke liye)
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    git \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
-COPY . /app/
-WORKDIR /app/
-RUN pip3 install --no-cache-dir --upgrade pip
-RUN pip3 install --no-cache-dir --upgrade --requirement requirements.txt
-CMD python3 -m YukkiMusic
+
+# Files copy karna
+COPY . .
+
+# Python requirements install karna
+RUN pip3 install --no-cache-dir -U -r requirements.txt
+
+# Bot start karna
+CMD ["bash", "start"]
